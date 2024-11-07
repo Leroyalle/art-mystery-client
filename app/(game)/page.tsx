@@ -10,7 +10,7 @@ export default function Home() {
         <p className="text-lg">
           Сыграй с друзьями! <br /> Догадаются ли они о чем ты думаешь?
         </p>
-        <Link href="/game/1">
+        <Link href="/room/1">
           <Button className="w-full" variant={'destructive'}>
             Создать комнату
           </Button>

@@ -11,7 +11,7 @@ export default function GameLayout({
 }>) {
   return (
     <>
-      <main>{children}</main>
+      <main className="h-full">{children}</main>
     </>
   );
 }
