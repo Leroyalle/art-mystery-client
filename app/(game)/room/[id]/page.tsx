@@ -1,13 +1,14 @@
 'use client';
 import { PaintCoords } from '@/@types/canvas';
-import { Canvas, Container } from '@/components/shared';
-import { Button, Input } from '@/components/ui';
-import { useEffect, useRef } from 'react';
+import { Message } from '@/@types/message';
+import { Canvas, ChatActions, Container, MessageList } from '@/components/shared';
+import { useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
 export default function Room() {
   const socketRef = useRef<Socket>();
   const canvasCtxRef = useRef<CanvasRenderingContext2D>();
+  const [messages, setMessages] = useState<Message[]>([]);
 
   useEffect(() => {
     socketRef.current = io(process.env.NEXT_PUBLIC_BASE_URL);
@@ -27,6 +28,17 @@ export default function Room() {
         canvasCtxRef.current?.clearRect(0, 0, 1000, 600);
       }
     });
+
+    socketRef.current.on('get_message', (data: Message) => {
+      console.log(data);
+      setMessages((prev) => [...prev, data]);
+    });
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current?.disconnect();
+      }
+    };
   }, []);
 
   const onPaint = (data: PaintCoords) => {
@@ -41,17 +53,21 @@ export default function Room() {
     }
   };
 
+  const onSendMessage = (message: string) => {
+    if (socketRef.current) {
+      socketRef.current.emit('send_message', {
+        name: 'Leroyalle',
+        text: message,
+      });
+      setMessages((prev) => [...prev, { name: 'Leroyalle', text: message }]);
+    }
+  };
+
   return (
     <Container className="flex gap-4 justify-between">
       <section className="p-2 h-[100vh] flex max-w-96 min-w-80 flex-col bg-gray-200 gap-2 border-black border-2">
-        <div className="flex-1 overflow-y-auto max-w-full"></div>
-        <div className="flex flex-col gap-y-2">
-          <Input
-            placeholder="Введите сообщение..."
-            className="bg-gray-800 text-white placeholder-gray-400 border-gray-600 focus:border-blue-500 focus:ring-blue-500"
-          />
-          <Button className="w-full">Отправить</Button>
-        </div>
+        <MessageList messages={messages} />
+        <ChatActions onSendMessage={onSendMessage} />
       </section>
       <section className="flex-1 bg-gray-200 flex items-center justify-center">
         <Canvas
