@@ -6,3 +6,4 @@ export { MessageList } from './chat';
 export { ChatActions } from './chat';
 export { CreateRoom } from './create-room';
 export { RoomClientWrapper } from './room-client-wrapper';
+export { VictoryModal } from './modals';

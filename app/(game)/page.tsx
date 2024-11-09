@@ -2,7 +2,7 @@ import { Container, Title, CreateRoom } from '@/components/shared';
 
 export default function Home() {
   return (
-    <Container className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+    <Container className="w-full h-[100vh] flex justify-center items-center">
       <div className="flex flex-col justify-center gap-y-2">
         <Title text={'Art Mystery'} size="2xl" />
         <p className="text-lg">
