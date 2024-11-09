@@ -1,6 +1,4 @@
-import { Container, Title } from '@/components/shared';
-import { Button } from '@/components/ui';
-import Link from 'next/link';
+import { Container, Title, CreateRoom } from '@/components/shared';
 
 export default function Home() {
   return (
@@ -10,11 +8,7 @@ export default function Home() {
         <p className="text-lg">
           Сыграй с друзьями! <br /> Догадаются ли они о чем ты думаешь?
         </p>
-        <Link href="/room/1">
-          <Button className="w-full" variant={'destructive'}>
-            Создать комнату
-          </Button>
-        </Link>
+        <CreateRoom />
       </div>
     </Container>
   );
