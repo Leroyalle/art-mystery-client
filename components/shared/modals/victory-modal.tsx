@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../ui';
+import Link from 'next/link';
 
 interface Props {
   open: boolean;
@@ -18,7 +19,9 @@ export const VictoryModal: React.FC<Props> = ({ open, name, hiddenWord }) => {
           Игрок {name} отгадал загаданное слово: {hiddenWord}
         </div>
         <DialogFooter>
-          <Button>В главное меню</Button>
+          <Link href="/">
+            <Button>В главное меню</Button>
+          </Link>
         </DialogFooter>
       </DialogContent>
     </Dialog>

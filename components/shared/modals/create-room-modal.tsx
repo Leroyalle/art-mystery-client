@@ -21,23 +21,28 @@ interface Props {
 
 export const CreateRoomModal: React.FC<Props> = ({ open, onClose }) => {
   const router = useRouter();
-  const { handleSubmit, control, setValue } = useForm<{ hiddenWord: string }>({
+  const [loading, setLoading] = React.useState(false);
+  const { handleSubmit, control, setValue } = useForm<{ name: string; hiddenWord: string }>({
     mode: 'onChange',
     reValidateMode: 'onChange',
     defaultValues: {
+      name: '',
       hiddenWord: '',
     },
   });
 
   const handleClose = () => {
+    setValue('name', '');
     setValue('hiddenWord', '');
     onClose();
   };
 
-  const onSubmit = async (data: { hiddenWord: string }) => {
+  const onSubmit = async (data: { name: string; hiddenWord: string }) => {
     try {
-      const room = await createRoom({ hiddenWord: data.hiddenWord });
+      setLoading(true);
+      const room = await createRoom({ author: data.name, hiddenWord: data.hiddenWord });
       toast.success(`Комната создана! Переход...`);
+      setValue('name', '');
       setValue('hiddenWord', '');
       router.push(`/room/${room.code}`);
     } catch (error) {
@@ -55,6 +60,21 @@ export const CreateRoomModal: React.FC<Props> = ({ open, onClose }) => {
         </DialogHeader>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="py-4">
+            <span className="mb-2 block text-xl">Ваше имя:</span>
+            <Controller
+              control={control}
+              name="name"
+              render={({ field }) => (
+                <Input
+                  {...field}
+                  required
+                  className="w-full md:text-2xl uppercase placeholder:text-lg placeholder:normal-case"
+                  placeholder="Ваше имя..."
+                />
+              )}
+            />
+          </div>
+          <div className="pb-4">
             <span className="mb-2 block text-xl">Загадайте слово:</span>
             <Controller
               control={control}
@@ -70,7 +90,7 @@ export const CreateRoomModal: React.FC<Props> = ({ open, onClose }) => {
             />
           </div>
           <DialogFooter>
-            <Button>Создать комнату</Button>
+            <Button loading={loading}>Создать комнату</Button>
             <Button onClick={handleClose} variant={'ghost'}>
               Отмена
             </Button>
