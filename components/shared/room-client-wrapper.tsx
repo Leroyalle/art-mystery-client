@@ -73,7 +73,7 @@ export const RoomClientWrapper: FC<Props> = ({ code }) => {
     if (socketRef.current) {
       socketRef.current.emit('send_message', {
         name: 'Leroyalle',
-        text: message,
+        text: message.toLocaleLowerCase(),
         pathname: code,
       });
       setMessages((prev) => [...prev, { name: 'Leroyalle', text: message }]);

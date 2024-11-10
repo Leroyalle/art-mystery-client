@@ -1,6 +1,7 @@
 import React from 'react';
 import { Button, Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '../../ui';
 import Link from 'next/link';
+import { updateDataPath } from '@/app/actions';
 
 interface Props {
   open: boolean;
@@ -19,7 +20,7 @@ export const VictoryModal: React.FC<Props> = ({ open, name, hiddenWord }) => {
           Игрок {name} отгадал загаданное слово: {hiddenWord}
         </div>
         <DialogFooter>
-          <Link href="/">
+          <Link href="/" onClick={() => updateDataPath('/rooms')}>
             <Button>В главное меню</Button>
           </Link>
         </DialogFooter>

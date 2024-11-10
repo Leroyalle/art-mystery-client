@@ -11,8 +11,8 @@ import {
 import { Controller, useForm } from 'react-hook-form';
 import { hasErrorField } from '@/lib';
 import toast from 'react-hot-toast';
-import { createRoom } from '@/app/services/rooms';
 import { useRouter } from 'nextjs-toploader/app';
+import { Api } from '@/app/services/api-client';
 
 interface Props {
   open: boolean;
@@ -38,9 +38,14 @@ export const CreateRoomModal: React.FC<Props> = ({ open, onClose }) => {
   };
 
   const onSubmit = async (data: { name: string; hiddenWord: string }) => {
+    const authorCookie = String(Math.random()).slice(2, 10);
     try {
       setLoading(true);
-      const room = await createRoom({ author: data.name, hiddenWord: data.hiddenWord });
+      document.cookie = `am_userId=${authorCookie}; path=/; max-age=1800`;
+      const room = await Api.room.createRoom({
+        author: data.name,
+        hiddenWord: data.hiddenWord,
+      });
       toast.success(`Комната создана! Переход...`);
       setValue('name', '');
       setValue('hiddenWord', '');
@@ -49,6 +54,7 @@ export const CreateRoomModal: React.FC<Props> = ({ open, onClose }) => {
       if (hasErrorField(error)) {
         toast.error(error.response.data.message);
       }
+      setLoading(false);
     }
   };
 
@@ -68,7 +74,7 @@ export const CreateRoomModal: React.FC<Props> = ({ open, onClose }) => {
                 <Input
                   {...field}
                   required
-                  className="w-full md:text-2xl uppercase placeholder:text-lg placeholder:normal-case"
+                  className="w-full md:text-2xl placeholder:text-lg"
                   placeholder="Ваше имя..."
                 />
               )}
@@ -85,6 +91,7 @@ export const CreateRoomModal: React.FC<Props> = ({ open, onClose }) => {
                   required
                   className="w-full md:text-2xl uppercase placeholder:text-lg placeholder:normal-case"
                   placeholder="Введите загаданное слово..."
+                  autoComplete="off"
                 />
               )}
             />
