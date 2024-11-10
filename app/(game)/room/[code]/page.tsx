@@ -15,7 +15,12 @@ export default async function Room({ params: { code } }: { params: { code: strin
 
   return (
     <Container>
-      <RoomClientWrapper code={roomData.code} />
+      <RoomClientWrapper
+        code={roomData.code}
+        author={roomData.author}
+        role={roomData.role}
+        hiddenWord={roomData.role === 'author' ? roomData.hiddenWord : undefined}
+      />
     </Container>
   );
 }

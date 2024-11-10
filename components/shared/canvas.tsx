@@ -1,6 +1,7 @@
 import { PaintCoords } from '@/@types/canvas';
 import React from 'react';
 import { Button } from '../ui';
+import { cn } from '@/lib/utils';
 
 type TCanvas = {
   onPaint: (data: PaintCoords) => void;
@@ -18,9 +19,9 @@ export const Canvas: React.FC<TCanvas> = function Canvas({ onPaint, onInit, onCl
       if (ctx) {
         onInit(ctx);
         rootRef.current.width = 1000;
-        rootRef.current.height = 600;
+        rootRef.current.height = 450;
         ctx.lineCap = 'round';
-        ctx.lineWidth = 8;
+        ctx.lineWidth = 6;
         ctx.strokeStyle = 'black';
 
         rootRef.current.addEventListener('mousemove', (e) => {
@@ -51,8 +52,8 @@ export const Canvas: React.FC<TCanvas> = function Canvas({ onPaint, onInit, onCl
   };
 
   return (
-    <div className={className}>
-      <canvas ref={rootRef} className="w-[1000px] h-[600px] border-black border-2" />
+    <div className={cn('select-none', className)}>
+      <canvas ref={rootRef} className=" border-black border-2" />
       <Button onClick={handleClickClear} variant={'destructive'}>
         Очистить
       </Button>

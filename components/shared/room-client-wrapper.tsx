@@ -4,13 +4,18 @@ import { Message } from '@/@types/message';
 import { Canvas, ChatActions, Container, MessageList, VictoryModal } from '@/components/shared';
 import { FC, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
+import { RoomInfo } from './room-info';
 
 interface Props {
   code: string;
+  role: 'user' | 'author';
+  author: string;
+  hiddenWord?: string;
 }
 
-export const RoomClientWrapper: FC<Props> = ({ code }) => {
+export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord }) => {
   const [opened, setOpened] = useState(false);
+  const [usersCount, setUsersCount] = useState(1);
   const [winner, setWinner] = useState<{ name: string; hiddenWord: string }>({
     name: '',
     hiddenWord: '',
@@ -23,6 +28,10 @@ export const RoomClientWrapper: FC<Props> = ({ code }) => {
       query: {
         roomId: code,
       },
+    });
+    socketRef.current.on('online_users', (onlineUsers: number) => {
+      console.log('ОНЛАЙН:', onlineUsers);
+      setUsersCount(onlineUsers);
     });
 
     socketRef.current.on('repaint', ({ x, y, dx, dy }) => {
@@ -86,7 +95,9 @@ export const RoomClientWrapper: FC<Props> = ({ code }) => {
         <MessageList messages={messages} />
         <ChatActions onSendMessage={onSendMessage} />
       </section>
-      <section className="flex-1 bg-gray-200 flex items-center justify-center">
+      <section className="flex-1 bg-gray-200 flex flex-col items-start justify-top px-10">
+        <RoomInfo author={author} hiddenWord={hiddenWord} online={usersCount} />
+
         <Canvas
           onPaint={onPaint}
           onInit={(ctx) => (canvasCtxRef.current = ctx)}
