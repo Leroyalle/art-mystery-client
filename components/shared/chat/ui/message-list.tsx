@@ -2,6 +2,7 @@
 import { Message } from '@/@types/message';
 import React, { useEffect, useRef } from 'react';
 import { MessageItem } from './message-item';
+import { Title } from '../../title';
 
 interface Props {
   messages: Message[];
@@ -18,6 +19,7 @@ export const MessageList: React.FC<Props> = ({ messages }) => {
 
   return (
     <div ref={containerRef} className="flex-1 overflow-y-auto max-w-full flex flex-col gap-y-4">
+      <Title text={'Чат'} size="lg" />
       {messages.map(({ name, text }, i) => (
         <MessageItem key={i} name={name} text={text} />
       ))}

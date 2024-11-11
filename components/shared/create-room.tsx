@@ -1,7 +1,7 @@
 'use client';
 import React from 'react';
 import { Button } from '../ui';
-import { CreateRoomModal } from './modals/create-room-modal';
+import { CreateRoomModal } from './modals';
 
 export const CreateRoom: React.FC = () => {
   const [formIsOpened, setFormIsOpened] = React.useState(false);

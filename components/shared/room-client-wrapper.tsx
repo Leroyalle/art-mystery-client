@@ -17,13 +17,15 @@ interface Props {
 export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord }) => {
   const [opened, setOpened] = useState(false);
   const [usersCount, setUsersCount] = useState(1);
+  const [username, setUsername] = useState(localStorage.getItem('am_username') || '');
+  const [messages, setMessages] = useState<Message[]>([]);
   const [winner, setWinner] = useState<{ name: string; hiddenWord: string }>({
     name: '',
     hiddenWord: '',
   });
   const socketRef = useRef<Socket>();
   const canvasCtxRef = useRef<CanvasRenderingContext2D>();
-  const [messages, setMessages] = useState<Message[]>([]);
+
   useEffect(() => {
     socketRef.current = io(process.env.NEXT_PUBLIC_BASE_URL, {
       query: {
@@ -48,6 +50,7 @@ export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord })
     socketRef.current.on('victory', (data: { name: string; hiddenWord: string }) => {
       setWinner(data);
       setOpened(true);
+      localStorage.removeItem('am_username');
     });
     socketRef.current.on('clear_canvas', () => {
       if (canvasCtxRef.current) {
@@ -82,11 +85,11 @@ export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord })
   const onSendMessage = (message: string) => {
     if (socketRef.current) {
       socketRef.current.emit('send_message', {
-        name: 'Leroyalle',
+        name: username,
         text: message.toLocaleLowerCase(),
         pathname: code,
       });
-      setMessages((prev) => [...prev, { name: 'Leroyalle', text: message }]);
+      setMessages((prev) => [...prev, { name: username, text: message }]);
     }
   };
 
@@ -94,11 +97,16 @@ export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord })
     <Container className="flex gap-4 justify-between">
       <section className="p-2 h-[100vh] flex max-w-96 min-w-80 flex-col bg-gray-200 gap-2 border-black border-2">
         <MessageList messages={messages} />
-        {role === 'user' && <ChatActions onSendMessage={onSendMessage} />}
+        {role === 'user' && (
+          <ChatActions
+            onSendMessage={onSendMessage}
+            setUsername={setUsername}
+            username={username}
+          />
+        )}
       </section>
       <section className="flex-1 bg-gray-200 flex flex-col items-start justify-top px-10">
         <RoomInfo author={author} hiddenWord={hiddenWord} online={usersCount} />
-
         <Canvas
           role={role}
           onPaint={onPaint}
