@@ -17,7 +17,7 @@ interface Props {
 export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord }) => {
   const [opened, setOpened] = useState(false);
   const [usersCount, setUsersCount] = useState(1);
-  const [username, setUsername] = useState(localStorage.getItem('am_username') || '');
+  const [username, setUsername] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [winner, setWinner] = useState<{ name: string; hiddenWord: string }>({
     name: '',
@@ -25,6 +25,13 @@ export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord })
   });
   const socketRef = useRef<Socket>();
   const canvasCtxRef = useRef<CanvasRenderingContext2D>();
+
+  useEffect(() => {
+    const storedUsername = localStorage.getItem('am_username');
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
+  }, []);
 
   useEffect(() => {
     socketRef.current = io(process.env.NEXT_PUBLIC_BASE_URL, {
@@ -94,27 +101,29 @@ export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord })
   };
 
   return (
-    <Container className="flex gap-4 justify-between">
-      <section className="p-2 h-[100vh] flex max-w-96 min-w-80 flex-col bg-gray-200 gap-2 border-black border-2">
-        <MessageList messages={messages} />
-        {role === 'user' && (
-          <ChatActions
-            onSendMessage={onSendMessage}
-            setUsername={setUsername}
-            username={username}
+    <Container className="flex flex-col">
+      <RoomInfo author={author} hiddenWord={hiddenWord} online={usersCount} />
+      <div className="flex gap-4 justify-between  rounded-sm">
+        <section className="p-2 h-[90vh] flex max-w-96 min-w-80 flex-col bg-white rounded-sm gap-2 border-black border-2">
+          <MessageList messages={messages} />
+          {role === 'user' && (
+            <ChatActions
+              onSendMessage={onSendMessage}
+              setUsername={setUsername}
+              username={username}
+            />
+          )}
+        </section>
+        <section className="flex-1 flex flex-col items-start justify-top px-10">
+          <Canvas
+            role={role}
+            onPaint={onPaint}
+            onInit={(ctx) => (canvasCtxRef.current = ctx)}
+            onClear={onClear}
+            className="flex flex-col gap-y-2 items-start"
           />
-        )}
-      </section>
-      <section className="flex-1 bg-gray-200 flex flex-col items-start justify-top px-10">
-        <RoomInfo author={author} hiddenWord={hiddenWord} online={usersCount} />
-        <Canvas
-          role={role}
-          onPaint={onPaint}
-          onInit={(ctx) => (canvasCtxRef.current = ctx)}
-          onClear={onClear}
-          className="flex flex-col gap-y-2 items-start"
-        />
-      </section>
+        </section>
+      </div>
       <VictoryModal open={opened} name={winner.name} hiddenWord={winner.hiddenWord} />
     </Container>
   );

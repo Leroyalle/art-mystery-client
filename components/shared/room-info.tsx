@@ -14,7 +14,7 @@ export const RoomInfo: React.FC<Props> = ({ author, hiddenWord, online, classNam
   return (
     <ul className={cn('flex flex-wrap items-center gap-4 my-3', className)}>
       <li className="text-2xl">
-        <strong>Игроков в комнате:</strong> {online}
+        <strong>Онлайн:</strong> {online}
       </li>
       <li className="text-2xl">
         <strong>Автор:</strong> {author}

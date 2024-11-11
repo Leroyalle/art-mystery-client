@@ -2,6 +2,7 @@ import { PaintCoords } from '@/@types/canvas';
 import React from 'react';
 import { Button } from '../ui';
 import { cn } from '@/lib/utils';
+import { Palette } from './palette';
 
 interface Props {
   role: 'user' | 'author';
@@ -19,6 +20,7 @@ export const Canvas: React.FC<Props> = function Canvas({
   className,
 }) {
   const rootRef = React.useRef<HTMLCanvasElement | null>(null);
+  const [color, setColor] = React.useState('black');
 
   React.useEffect(() => {
     if (rootRef.current) {
@@ -29,7 +31,7 @@ export const Canvas: React.FC<Props> = function Canvas({
         rootRef.current.height = 450;
         ctx.lineCap = 'round';
         ctx.lineWidth = 4;
-        ctx.strokeStyle = 'black';
+        ctx.strokeStyle = color;
 
         rootRef.current.addEventListener('mousemove', (e) => {
           const x = e.offsetX;
@@ -50,6 +52,15 @@ export const Canvas: React.FC<Props> = function Canvas({
     }
   }, []);
 
+  React.useEffect(() => {
+    if (rootRef.current) {
+      const ctx = rootRef.current.getContext('2d');
+      if (ctx) {
+        ctx.strokeStyle = color;
+      }
+    }
+  }, [color]);
+
   const handleClickClear = () => {
     onClear();
     if (rootRef.current) {
@@ -57,17 +68,22 @@ export const Canvas: React.FC<Props> = function Canvas({
       ctx?.clearRect(0, 0, 1000, 600);
     }
   };
-
   return (
     <div className={cn('select-none', className)}>
       <canvas
         ref={rootRef}
-        className={cn(' border-black border-2', role === 'user' && 'pointer-events-none')}
+        className={cn(
+          'border-black border-2 bg-white rounded-sm',
+          role === 'user' && 'pointer-events-none',
+        )}
       />
       {role === 'author' && (
-        <Button onClick={handleClickClear} variant={'destructive'}>
-          Очистить
-        </Button>
+        <div className="flex gap-2 items-center">
+          <Button onClick={handleClickClear} variant={'destructive'}>
+            Очистить
+          </Button>
+          <Palette onChangeColor={setColor} color={color} />
+        </div>
       )}
     </div>
   );
