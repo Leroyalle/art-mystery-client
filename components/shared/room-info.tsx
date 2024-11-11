@@ -24,10 +24,11 @@ export const RoomInfo: React.FC<Props> = ({ author, hiddenWord, online, classNam
           <strong>Загаданное слово:</strong>
           {isShow ? (
             <>
-              {hiddenWord} <Eye onClick={() => setIsShow(false)} />
+              <span className="text-red-700">{hiddenWord}</span>
+              <EyeOff onClick={() => setIsShow(false)} className="select-none" />
             </>
           ) : (
-            <EyeOff onClick={() => setIsShow(true)} />
+            <Eye onClick={() => setIsShow(true)} className="select-none" />
           )}
         </li>
       )}

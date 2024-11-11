@@ -5,6 +5,7 @@ import { Canvas, ChatActions, Container, MessageList, VictoryModal } from '@/com
 import { FC, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { RoomInfo } from './room-info';
+// import toast from 'react-hot-toast';
 
 interface Props {
   code: string;
@@ -30,8 +31,8 @@ export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord })
       },
     });
     socketRef.current.on('online_users', (onlineUsers: number) => {
-      console.log('ОНЛАЙН:', onlineUsers);
       setUsersCount(onlineUsers);
+      // toast.success('Новый игрок!');
     });
 
     socketRef.current.on('repaint', ({ x, y, dx, dy }) => {
@@ -93,12 +94,13 @@ export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord })
     <Container className="flex gap-4 justify-between">
       <section className="p-2 h-[100vh] flex max-w-96 min-w-80 flex-col bg-gray-200 gap-2 border-black border-2">
         <MessageList messages={messages} />
-        <ChatActions onSendMessage={onSendMessage} />
+        {role === 'user' && <ChatActions onSendMessage={onSendMessage} />}
       </section>
       <section className="flex-1 bg-gray-200 flex flex-col items-start justify-top px-10">
         <RoomInfo author={author} hiddenWord={hiddenWord} online={usersCount} />
 
         <Canvas
+          role={role}
           onPaint={onPaint}
           onInit={(ctx) => (canvasCtxRef.current = ctx)}
           onClear={onClear}

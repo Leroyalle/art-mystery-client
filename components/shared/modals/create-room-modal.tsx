@@ -41,7 +41,7 @@ export const CreateRoomModal: React.FC<Props> = ({ open, onClose }) => {
     const authorCookie = String(Math.random()).slice(2, 10);
     try {
       setLoading(true);
-      document.cookie = `am_userId=${authorCookie}; path=/; max-age=1800`;
+      document.cookie = `am_userId=${authorCookie}; path=/; max-age=5800`;
       const room = await Api.room.createRoom({
         author: data.name,
         hiddenWord: data.hiddenWord,

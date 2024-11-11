@@ -3,14 +3,21 @@ import React from 'react';
 import { Button } from '../ui';
 import { cn } from '@/lib/utils';
 
-type TCanvas = {
+interface Props {
+  role: 'user' | 'author';
   onPaint: (data: PaintCoords) => void;
   onInit: (ref: CanvasRenderingContext2D) => void;
   onClear: () => void;
   className?: string;
-};
+}
 
-export const Canvas: React.FC<TCanvas> = function Canvas({ onPaint, onInit, onClear, className }) {
+export const Canvas: React.FC<Props> = function Canvas({
+  role,
+  onPaint,
+  onInit,
+  onClear,
+  className,
+}) {
   const rootRef = React.useRef<HTMLCanvasElement | null>(null);
 
   React.useEffect(() => {
@@ -21,7 +28,7 @@ export const Canvas: React.FC<TCanvas> = function Canvas({ onPaint, onInit, onCl
         rootRef.current.width = 1000;
         rootRef.current.height = 450;
         ctx.lineCap = 'round';
-        ctx.lineWidth = 6;
+        ctx.lineWidth = 4;
         ctx.strokeStyle = 'black';
 
         rootRef.current.addEventListener('mousemove', (e) => {
@@ -53,10 +60,15 @@ export const Canvas: React.FC<TCanvas> = function Canvas({ onPaint, onInit, onCl
 
   return (
     <div className={cn('select-none', className)}>
-      <canvas ref={rootRef} className=" border-black border-2" />
-      <Button onClick={handleClickClear} variant={'destructive'}>
-        Очистить
-      </Button>
+      <canvas
+        ref={rootRef}
+        className={cn(' border-black border-2', role === 'user' && 'pointer-events-none')}
+      />
+      {role === 'author' && (
+        <Button onClick={handleClickClear} variant={'destructive'}>
+          Очистить
+        </Button>
+      )}
     </div>
   );
 };
