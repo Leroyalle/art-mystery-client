@@ -12,9 +12,9 @@ interface Props {
 export const Palette: React.FC<Props> = ({ onChangeColor, color: _color, className }) => {
   return (
     <ul className={cn('flex flex-wrap gap-3 w-full', className)}>
-      {PALETTE_ITEMS.map(({ color, value }) => (
+      {PALETTE_ITEMS.map(({ color, value }, i) => (
         <PaletteItem
-          key={value}
+          key={i}
           color={color}
           value={value}
           onChange={onChangeColor}

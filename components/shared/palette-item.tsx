@@ -9,13 +9,12 @@ interface Props {
 }
 
 export const PaletteItem: React.FC<Props> = ({ onChange, color, value, active }) => {
-  console.log(active);
   return (
     <li
       className={cn(
         'w-8 h-8 rounded-full cursor-pointer',
         color,
-        active && 'border-yellow-200 border-4',
+        active && 'border-yellow-200 border-4 scale-125',
       )}>
       <input
         type="checkbox"

@@ -1,11 +1,10 @@
 'use client';
-import { PaintCoords } from '@/@types/canvas';
+import { PaintData } from '@/@types/canvas';
 import { Message } from '@/@types/message';
 import { Canvas, ChatActions, Container, MessageList, VictoryModal } from '@/components/shared';
 import { FC, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 import { RoomInfo } from './room-info';
-// import toast from 'react-hot-toast';
 
 interface Props {
   code: string;
@@ -34,18 +33,19 @@ export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord })
   }, []);
 
   useEffect(() => {
-    socketRef.current = io(process.env.NEXT_PUBLIC_BASE_URL, {
+    socketRef.current = io(process.env.NEXT_PUBLIC_BASE_API_URL, {
       query: {
         roomId: code,
       },
     });
     socketRef.current.on('online_users', (onlineUsers: number) => {
       setUsersCount(onlineUsers);
-      // toast.success('Новый игрок!');
     });
 
-    socketRef.current.on('repaint', ({ x, y, dx, dy }) => {
+    socketRef.current.on('repaint', ({ x, y, dx, dy, width, color }: PaintData) => {
       if (canvasCtxRef.current) {
+        canvasCtxRef.current.lineWidth = width;
+        canvasCtxRef.current.strokeStyle = color;
         canvasCtxRef.current.beginPath();
         canvasCtxRef.current.moveTo(x, y);
         canvasCtxRef.current.lineTo(x - dx, y - dy);
@@ -77,7 +77,7 @@ export const RoomClientWrapper: FC<Props> = ({ code, role, author, hiddenWord })
     };
   }, []);
 
-  const onPaint = (data: PaintCoords) => {
+  const onPaint = (data: PaintData) => {
     if (socketRef.current) {
       socketRef.current.emit('paint', data);
     }

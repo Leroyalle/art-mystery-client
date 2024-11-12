@@ -1,6 +1,7 @@
 import React from 'react';
 import { cn } from '@/lib/utils';
 import { Eye, EyeOff } from 'lucide-react';
+import { ShareLink } from './share-link';
 
 interface Props {
   author: string;
@@ -12,7 +13,7 @@ interface Props {
 export const RoomInfo: React.FC<Props> = ({ author, hiddenWord, online, className }) => {
   const [isShow, setIsShow] = React.useState(false);
   return (
-    <ul className={cn('flex flex-wrap items-center gap-4 my-3', className)}>
+    <ul className={cn('flex flex-wrap items-center gap-6 my-3', className)}>
       <li className="text-2xl">
         <strong>Онлайн:</strong> {online}
       </li>
@@ -32,6 +33,9 @@ export const RoomInfo: React.FC<Props> = ({ author, hiddenWord, online, classNam
           )}
         </li>
       )}
+      <li>
+        <ShareLink />
+      </li>
     </ul>
   );
 };
